@@ -10,6 +10,7 @@ HTTPS to a real domain with a valid Let's Encrypt certificate, so to a DPI box i
 is indistinguishable from you visiting a normal website.
 
 **Author:** Ali Rajabpour Sanati — [rajabpour.com](https://rajabpour.com)
+
 **License:** MIT — free forever, for everyone. See [LICENSE](LICENSE).
 
 ## How it works
