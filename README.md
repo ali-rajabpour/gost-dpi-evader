@@ -9,7 +9,7 @@ nothing but a domain and a few env vars. Traffic leaves your machine as ordinary
 HTTPS to a real domain with a valid Let's Encrypt certificate, so to a DPI box it
 is indistinguishable from you visiting a normal website.
 
-**Author:** Ali Rajabpour Sanati — [rajabpour.com](https://rajabpour.com)
+**Author:** Ali Rajabpour Sanati — [Rajabpour.com](https://rajabpour.com)
 
 **License:** MIT — free forever, for everyone. See [LICENSE](LICENSE).
 
