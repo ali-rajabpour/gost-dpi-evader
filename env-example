@@ -1,0 +1,31 @@
+# GOST DPI-Resistant HTTPS Proxy — Environment Variables
+# Author: Ali Rajabpour Sanati — https://rajabpour.com
+# License: MIT — free forever, for everyone.
+#
+# Copy to .env in the Dokploy UI (Environment tab) and fill in.
+# Never commit the real .env.
+
+# Domain routed to this stack. Point an A record at your Dokploy host first.
+DOMAIN=proxy.example.com
+
+# Proxy credentials. Use long, alphanumeric values — avoid : / @ ? # in the
+# password, they break the mws:// URL. Generate: openssl rand -hex 16
+PROXY_USER=changeme
+PROXY_PASSWORD=changeme
+
+# Secret websocket path (must start with /). Anything not on this path 404s.
+# Generate: echo "/$(openssl rand -hex 8)"
+WS_PATH=/change-this-secret-path
+
+# TLS certificate source — pick ONE:
+#
+#   letsencrypt  Traefik requests a free Let's Encrypt cert via ACME (HTTP-01).
+#               Use this when no custom cert exists for DOMAIN.
+#
+#   (empty)     Leave blank if you uploaded a custom cert in Dokploy UI
+#               (e.g. a Cloudflare Origin CA cert). Traefik matches it by
+#               domain name automatically — no resolver needed.
+CERT_RESOLVER=letsencrypt
+
+# Optional: pin a different GOST image/tag. Defaults to gogost/gost:3.2.6.
+# GOST_IMAGE=gogost/gost:3.2.6

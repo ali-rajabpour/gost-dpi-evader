@@ -1,0 +1,50 @@
+# GOST DPI-Resistant HTTPS Proxy
+# Author: Ali Rajabpour Sanati — https://rajabpour.com
+# License: MIT — free forever, for everyone.
+#
+# "The internet is a right, not a privilege."
+#
+# Lightweight encrypted proxy for Dokploy + Traefik. See README.md for setup.
+
+services:
+  gost:
+    image: ${GOST_IMAGE:-gogost/gost:3.2.6}
+    container_name: gost-tunnel
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    # Plain multiplexed-websocket listener on a secret path. TLS is handled at
+    # the edge by Traefik, so inside the network this speaks cleartext mws.
+    # The ?path= means a probe of the bare domain gets nothing — only clients
+    # that know the path can open the tunnel.
+    command: ["-L", "mws://${PROXY_USER}:${PROXY_PASSWORD}@:8080?path=${WS_PATH}"]
+    expose:
+      - "8080"
+    networks:
+      - dokploy-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "traefik.enable=true"
+      # Only the exact host AND secret path are routed to the tunnel. Everything
+      # else on the domain 404s at Traefik — nothing to fingerprint.
+      - "traefik.http.routers.gost-tunnel.rule=Host(`${DOMAIN}`) && PathPrefix(`${WS_PATH}`)"
+      - "traefik.http.routers.gost-tunnel.entrypoints=websecure"
+      - "traefik.http.routers.gost-tunnel.tls=true"
+      - "traefik.http.routers.gost-tunnel.tls.certresolver=${CERT_RESOLVER:-letsencrypt}"
+      # When CERT_RESOLVER is empty, the label above becomes certresolver=
+      # (ignored by Traefik) and a custom cert from Dokploy UI is matched by SNI.
+      - "traefik.http.services.gost-tunnel.loadbalancer.server.port=8080"
+
+# External network created by Dokploy — Traefik lives here and picks up the
+# labels above.
+networks:
+  dokploy-network:
+    external: true
